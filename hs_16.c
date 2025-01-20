@@ -1,103 +1,94 @@
 #include <stdio.h>
-
 #pragma pack(1)
 
-struct Geo
-{
+struct Geo {
     double dLatitude;
     double dLongitude;
     float fAltitude;
 };
 
-struct Messwert
-{
+struct Messwert {
     int iMessungNummer;
     double dLuftdruck;
     float fTemperatur[3];
     struct Geo Position;
 };
 
-struct Messwert set_mw(int iNummer)
-{
-    struct Messwert tmp;
-    tmp.iMessungNummer = iNummer;
-    tmp.dLuftdruck = 1013.25;
-    tmp.fTemperatur[0] = 15.0f;
-    tmp.fTemperatur[1] = 16.5f;
-    tmp.fTemperatur[2] = 18.2f;
-
-    tmp.Position.dLatitude = 51.1234;
-    tmp.Position.dLongitude = 7.5678;
-    tmp.Position.fAltitude = 345.6f;
-
-    return tmp;
+// Funktion zur Ausgabe eines Messwerts (Call by Value)
+void ausgabe(struct Messwert messung) {
+    printf("Messung Nummer: %d\n", messung.iMessungNummer);
+    printf("Luftdruck: %.2lf\n", messung.dLuftdruck);
+    printf("Temperatur[0]: %.2f\n", messung.fTemperatur[0]);
+    printf("Temperatur[1]: %.2f\n", messung.fTemperatur[1]);
+    printf("Temperatur[2]: %.2f\n", messung.fTemperatur[2]);
+    printf("Position: Latitude: %.5lf, Longitude: %.5lf, Altitude: %.2f\n",
+           messung.Position.dLatitude,
+           messung.Position.dLongitude,
+           messung.Position.fAltitude);
+    printf("Größe des Arrays fTemperatur: %lu Bytes\n", sizeof(messung.fTemperatur));
+    
+    // Änderung eines Array-Elements
+    messung.fTemperatur[1] = 99.9f;
 }
 
-void ausgabe(struct Messwert mw)
-{
-    printf("\n--- ausgabe() ---\n");
-    printf("Messung Nummer:  %d\n", mw.iMessungNummer);
-    printf("Luftdruck:       %.2f\n", mw.dLuftdruck);
-    printf("Temperatur[0]:   %.2f\n", mw.fTemperatur[0]);
-    printf("Temperatur[1]:   %.2f\n", mw.fTemperatur[1]);
-    printf("Temperatur[2]:   %.2f\n", mw.fTemperatur[2]);
-    printf("Position:        Lat=%.5f, Lon=%.5f, Alt=%.2f\n",
-           mw.Position.dLatitude, mw.Position.dLongitude, mw.Position.fAltitude);
-
-    printf("sizeof(mw.fTemperatur) = %zu\n", sizeof(mw.fTemperatur));
-
-    mw.fTemperatur[1] = 99.99f;
-    printf("=> ---FUNKTION ausgabe()--- Der aktuelle Wert von mw.fTemperatur[1] ist %.2f\n", mw.fTemperatur[1]);
+// Funktion zur Ausgabe eines Messwerts (Call by Reference)
+void ausgabe_p(struct Messwert *messung) {
+    printf("Messung Nummer: %d\n", messung->iMessungNummer);
+    printf("Luftdruck: %.2lf\n", messung->dLuftdruck);
+    printf("Temperatur[0]: %.2f\n", messung->fTemperatur[0]);
+    printf("Temperatur[1]: %.2f\n", messung->fTemperatur[1]);
+    printf("Temperatur[2]: %.2f\n", messung->fTemperatur[2]);
+    printf("Position: Latitude: %.5lf, Longitude: %.5lf, Altitude: %.2f\n",
+           messung->Position.dLatitude,
+           messung->Position.dLongitude,
+           messung->Position.fAltitude);
+    printf("Größe des Arrays fTemperatur: %lu Bytes\n", sizeof(messung->fTemperatur));
+    
+    // Änderung eines Array-Elements
+    messung->fTemperatur[1] = 99.9f;
 }
 
-// Diese Funktion macht das Gleiche wie ausgabe(), aber diesmal übergeben wir
-// einen Zeiger auf einen Messwert.
-void ausgabe_p(struct Messwert *pm)
-{
-    printf("\n--- ausgabe_p() ---\n");
-    printf("Messung Nummer:  %d\n", pm->iMessungNummer);
-    printf("Luftdruck:       %.2f\n", pm->dLuftdruck);
-    printf("Temperatur[0]:   %.2f\n", pm->fTemperatur[0]);
-    printf("Temperatur[1]:   %.2f\n", pm->fTemperatur[1]);
-    printf("Temperatur[2]:   %.2f\n", pm->fTemperatur[2]);
-    printf("Position:        Lat=%.5f, Lon=%.5f, Alt=%.2f\n",
-           pm->Position.dLatitude, pm->Position.dLongitude, pm->Position.fAltitude);
-
-    printf("sizeof(pm->fTemperatur) = %zu\n", sizeof(pm->fTemperatur));
-
-    pm->fTemperatur[1] = 123.45f;
-    printf("=> ---FUNKTION ausgabe_p() --- Der aktuelle Wert von pm->fTemperatur[1] ist %.2f\n", pm->fTemperatur[1]);
+// Funktion zur Erstellung eines Messwerts
+struct Messwert set_mw(int nummer) {
+    struct Messwert mess;
+    mess.iMessungNummer = nummer;
+    mess.dLuftdruck = 1050.25;
+    mess.fTemperatur[0] = 25.0f;
+    mess.fTemperatur[1] = 16.5f;
+    mess.fTemperatur[2] = 18.0f;
+    mess.Position.dLatitude = 51.44786;
+    mess.Position.dLongitude = 7.27069;
+    mess.Position.fAltitude = 128.0f;
+    return mess;
 }
 
-int main(void)
-{
+int main() {
+    struct Messwert mess;
+    mess.iMessungNummer = 1;
+    mess.dLuftdruck = 1013.25;
+    mess.fTemperatur[0] = 20.0f;
+    mess.fTemperatur[1] = 21.5f;
+    mess.fTemperatur[2] = 22.0f;
+    mess.Position.dLatitude = 51.44786;
+    mess.Position.dLongitude = 7.27069;
+    mess.Position.fAltitude = 128.0f;
+    
+    printf("--- Platzbedarf  ---\n");
+    printf("Speicherbedarf von messung: %lu Bytes\n", sizeof(mess));
+    printf("Speicherbedarf von messung.Position: %lu Bytes\n", sizeof(mess.Position));
 
-    struct Messwert messung = {
-        42,
-        998.12,
-        {10.1f, 20.2f, 30.3f},
-        {51.44786, 7.27069, 128.0f}};
-
-    printf("sizeof(messung)         = %zu\n", sizeof(messung));
-    printf("sizeof(messung.Position)= %zu\n", sizeof(messung.Position));
-
+    printf("\n--- Ausgabe mit Call by Value ---\n");
+    ausgabe(mess);
+    printf("\nTemperatur[1] nach Call by Value: %.2f\n", mess.fTemperatur[1]);
+    
+    printf("\n--- Ausgabe mit Call by Reference ---\n");
+    ausgabe_p(&mess);
+    printf("\nTemperatur[1] nach Call by Reference: %.2f\n", mess.fTemperatur[1]);
+    
+    
+    printf("\n--- Ausgabe mit set_mw ---\n");
+    struct Messwert messung = set_mw(1);
     ausgabe(messung);
-
-    printf("\nZurück in main:\n");
-
-    printf("Nach ausgabe(), messung.fTemperatur[1] = %.2f\n",
-           messung.fTemperatur[1]);
-
-    ausgabe_p(&messung);
-
-    printf("\nZurück in main:\n");
-
-    printf("Nach ausgabe_p(), messung.fTemperatur[1] = %.2f\n",
-           messung.fTemperatur[1]);
-
-    struct Messwert messNeu = set_mw(99);
-
-    ausgabe(messNeu);
 
     return 0;
 }
